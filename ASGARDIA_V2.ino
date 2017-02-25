@@ -10,29 +10,22 @@
 #define BLYNK_PRINT Serial // Comment this out to disable prints and save space
 #include <ESP8266_Lib.h>
 #include <BlynkSimpleShieldEsp8266.h>
-// or Software Serial on Uno, Nano...
-#include <SoftwareSerial.h> //ldw move to library 
 
-//defines   ldw
-// Hardware Serial on Mega, Leonardo, Micro...
-#define EspSerial Serial1
-// Your ESP8266 baud rate:
-#define ESP8266_BAUD 9600
 
 //Digital pin mapping
+//*********** Heimadal **************
+const int trigPin1 = 11;
+const int echoPin1 = 12;
+int motor = 6;
+int door_led = 10;
 
+int pinDHT11 = 4; //DHT
+
+int cds = 1;
 int led1 = 2;
 int led2 = 3;
 int led3 = 4;
-int pinDHT11 = 5; //DHT
-int motor = 6;
-// pin 8,9 are used for esp8266
-int door_led = 10;
-const int trigPin1 = 11;
-const int echoPin1 = 12;
-
-// Analog pin mapping
-int cds = 1;
+//***********************************
 
   // You should get Auth Token in the Blynk App.
 // Go to the Project Settings (nut icon).
@@ -43,8 +36,16 @@ char auth[] = "ca9e5ac677444263a1993ee5273dd9c8";
 char ssid[] = "cchamchi1";
 char pass[] = "1234asdf";
 
-//esp8266 ldw
+// Hardware Serial on Mega, Leonardo, Micro...
+#define EspSerial Serial1
+
+// or Software Serial on Uno, Nano...
+#include <SoftwareSerial.h>
 SoftwareSerial EspSerial(8, 9); // RX, TX
+
+// Your ESP8266 baud rate:
+#define ESP8266_BAUD 9600
+
 ESP8266 wifi(&EspSerial);
 
 
@@ -67,8 +68,8 @@ void DHT_run()
   byte temperature = 0;
   byte humidity = 0;
   if (dht11.read(pinDHT11, &temperature, &humidity, NULL)) {
-    Serial.print("Read DHT11 failed.");
-    return;
+  Serial.print("Read DHT11 failed.");
+  return;
   }
     Serial.print("Sample OK: ");
     Serial.print((int)temperature); Serial.print(" *C, ");
@@ -89,17 +90,19 @@ void DHT_run()
     lcd.print((int)humidity);
     lcd.setCursor(11,0);
     lcd.print("%");
-}
+    }
+//**********************************
 
+//*********************************
 
 void setup_blynk()
 {
   // Set console baud rate
-  Serial.begin(115200);
-  delay(10);
-  // Set ESP8266 baud rate
-  EspSerial.begin(ESP8266_BAUD);
-  delay(10);
+Serial.begin(115200);
+delay(10);
+// Set ESP8266 baud rate
+EspSerial.begin(ESP8266_BAUD);
+delay(10);
 }
 
 void setup_Poseidon()
@@ -171,14 +174,14 @@ void Heimdal_run()
   if ((distance1 < 5) && (distance1 > 0))
   {
     gate_open();
-  }
-  else
-  {
-    gate_close();
-   }
-     myservo.write(0);
-     //delay(1000); // moved to main loop
-}
+    }
+    else
+    {
+      gate_close();
+      }
+      myservo.write(0);
+      //delay(1000); // moved to main loop
+       }
 
 void kim_run()
 {
@@ -190,23 +193,21 @@ void kim_run()
     digitalWrite(led2, LOW);
     digitalWrite(led3, LOW);
     Serial.println("LED1 ON");
-  }
-  else if (720 < cdsValue < 900) // TODO  ( ( ) && () )
-  {
-    digitalWrite(led1, HIGH);
-    digitalWrite(led2, HIGH);
-    digitalWrite(led3, LOW);
-    Serial.println("LED12 ON");
-   }
-   else if( cdsValue < 720) 
-   {
+    }else if (720 < cdsValue < 900)
+    {
       digitalWrite(led1, HIGH);
       digitalWrite(led2, HIGH);
-      digitalWrite(led3, HIGH);
-      Serial.println("LED123 ON");
-    }
-        //delay(2000);
-}
+      digitalWrite(led3, LOW);
+      Serial.println("LED12 ON");
+      }else if( cdsValue < 720) 
+      {
+        digitalWrite(led1, HIGH);
+        digitalWrite(led2, HIGH);
+        digitalWrite(led3, HIGH);
+        Serial.println("LED123 ON");
+        }
+        delay(2000);
+         }
 
 
 
@@ -226,7 +227,6 @@ void setup()
 void loop() 
 {
   // put your main code here, to run repeatedly:
-  //TODO sin use timer 
   Heimdal_run();
   Poseidon_run();
   kim_run();
