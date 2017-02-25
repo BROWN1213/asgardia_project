@@ -123,7 +123,7 @@ void Poseidon_run()
   DHT_run();
   }
 
-void setup_kim()
+void setup_Horus()
 {
   pinMode(led1, OUTPUT);
   pinMode(led2, OUTPUT);
@@ -183,7 +183,7 @@ void Heimdal_run()
       //delay(1000); // moved to main loop
        }
 
-void kim_run()
+void Horus_run()
 {
   int cdsValue = analogRead(cds);
   Serial.println(cdsValue);
@@ -229,7 +229,7 @@ void loop()
   // put your main code here, to run repeatedly:
   Heimdal_run();
   Poseidon_run();
-  kim_run();
+  Horus_run();
   delay(1000);
   Blynk.run();
 }
